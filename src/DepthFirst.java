@@ -1,18 +1,20 @@
 
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.LinkedList;
+import java.util.Stack;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collections;
 
-	public class ShortestPath {
+	public class DepthFirst {
 		int i, j;
 		static int cost =0;
-		ShortestPath prev;
+		boolean visited;
+		DepthFirst prev;
 
-		public ShortestPath(int[] i, ShortestPath prev) {
+		public DepthFirst(int[] i, DepthFirst prev) {
 			this.i = i[0];
 			this.j = i[1];
 			this.prev = prev;
@@ -23,8 +25,8 @@ import java.util.Collections;
 		 
 		 //generation of Maze
 		 
-	static	 final int WIDTH = 23;
-	     static final int HEIGHT = 23;
+	static	 final int WIDTH = 24;
+	     static final int HEIGHT = 24;
 	     
 	     static int start_row;
 	     static int start_col;
@@ -95,76 +97,94 @@ import java.util.Collections;
 				return cost;
 			}
 			
-
-		 
-		 
-		// BFS
+			
+		// DFS
 		public static void newshortestPath(char[][] maze) {
 			int N = maze.length;
 			// initial
-			ShortestPath step = new ShortestPath(findEntrance(), null);
-			LinkedList<ShortestPath> queue = new LinkedList<ShortestPath>();
-			queue.add(step);
+			DepthFirst step = new DepthFirst(findEntrance(), null);
+			Stack<DepthFirst> stack = new Stack<DepthFirst>();
+			stack.push(step);
 			// using set to check if already traversed
-			HashSet<Integer> set = new HashSet<Integer>();
+			//HashSet<Integer> set = new HashSet<Integer>();
 			boolean findDest = false;
-			while(!queue.isEmpty() && !findDest) {
-				LinkedList<ShortestPath> tmpQueue = new LinkedList<ShortestPath>();
-				while(!queue.isEmpty()) {
-					step = queue.remove();
+			while(!stack.isEmpty() && !findDest) {
+				//Stack<DepthFirst> tmpstack = new Stack<DepthFirst>();
+				while(!stack.isEmpty()) {
+					step = stack.pop();
 					int i = step.i, j = step.j, id;
 					if(maze[i][j] == '.') {	// find dest
 						findDest = true;
 						break;
 					}
-					ShortestPath next;
+					DepthFirst next;
 					// move left
 					char temp = maze[i][j - 1];
 					if(j > 0 && temp != '%') {
-						id = N * i + (j - 1);
-						if(!set.contains(id)) {
-							set.add(id);
+						//id = N * i + (j - 1);
+						//if(!stack.contains(id)) {
+							//stack.push(id);
 							int[] a = {i,j-1};
-							next = new ShortestPath(a, step);
-							tmpQueue.add(next);
+							next = new DepthFirst(a, step);
+							next.visited = true;
+							stack.push(next);
 						}
-					}
+					
+//					else{
+//						
+//						stack.pop();
+//					
+//					}
 					// move right
 					if(j < N-1 && maze[i][j + 1] != '%') {
-						id = N * i + (j + 1);
-						if(!set.contains(id)) {
-							set.add(id);
+						//id = N * i + (j + 1);
+						//if(!set.contains(id)) {
+							//set.add(id);
 							int[] a = {i,j+1};
-							next = new ShortestPath(a, step);
-							tmpQueue.add(next);
+							next = new DepthFirst(a, step);
+							next.visited = true;
+							stack.push(next);
 						}
-					}
+					
+//					else{
+//						
+//						stack.pop();
+//					
+//					}
 					// move up
 					if(i > 0 && maze[i - 1][j] != '%') {
-						id = N * (i - 1) + j;
-						if(!set.contains(id)) {
-							set.add(id);
+						//id = N * (i - 1) + j;
+						//if(!set.contains(id)) {
+							//set.add(id);
 							int[] a = {i-1,j};
-							next = new ShortestPath(a, step);
-							tmpQueue.add(next);
+							next = new DepthFirst(a, step);
+							next.visited = true;
+							stack.push(next);
 						}
-					}
+					
+//					else{
+//						
+//						stack.pop();
+//					
+//					
+//					}
 					// move down
 					if(i < N -1 && maze[i + 1][j] != '%') {
-						id = N * (i + 1) + j;
-						if(!set.contains(id)) {
-							set.add(id);
+						//id = N * (i + 1) + j;
+						//if(!set.contains(id)) {
+							//set.add(id);
 							int[] a = {i+1,j};
-							next = new ShortestPath(a, step);
-							tmpQueue.add(next);
+							next = new DepthFirst(a, step);
+							next.visited = true;
+							stack.push(next);
 						}
-					}
+					
 				}
-				queue = tmpQueue;
+		
 			}
 			if(findDest) {
 				// build path
-				ArrayList<ShortestPath> path = new ArrayList<ShortestPath>();
+				ArrayList<DepthFirst> path = new ArrayList<DepthFirst>();
 				
 				while(step != null) {
 					path.add(step);
@@ -204,7 +224,7 @@ import java.util.Collections;
 	        loadFile("maze.txt");
 	        printArray();
 
-			System.out.println("Finding the Shortest Path...");
+			System.out.println("Finding the Shortest Path in DFS...");
 			
 			newshortestPath(maze);
 			System.out.println("The cost for the Shortest path is " +getcost());
@@ -213,3 +233,4 @@ import java.util.Collections;
 	 }
 	
 	
+
