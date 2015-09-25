@@ -21,8 +21,8 @@ public class DepthFirst {
 
 
 	//generation of Maze
-	static	 final int WIDTH = 24;
-	static final int HEIGHT = 24;
+	static	 final int WIDTH = 37;
+	static final int HEIGHT = 37;
 
 	static char[][] maze = new char[WIDTH][HEIGHT];
 
@@ -34,7 +34,7 @@ public class DepthFirst {
 
 		try 
 		{
-			BufferedReader reader = new BufferedReader(new FileReader("C:/Users/Piyush/Desktop/maze.txt"));
+			BufferedReader reader = new BufferedReader(new FileReader("C:/Users/Piyush/Desktop/bigmaze.txt"));
 			String line = "";
 			while((line = reader.readLine()) != null) 
 			{
@@ -98,6 +98,9 @@ public class DepthFirst {
 			currentNode = stack.peek();
 			boolean hasPacmanMoved = false;
 			int currentRow = currentNode.getRow(), currentCol= currentNode.getCol();
+			
+			if(stack.size() == 2)
+				System.out.println("stack size is 1");
 
 			if(maze[currentRow][currentCol] == '.') 
 			{
@@ -110,7 +113,7 @@ public class DepthFirst {
 			// try left
 			String nxtRowStr = String.valueOf(currentRow);
 			String nxtColStr = String.valueOf(currentCol-1);
-			if( (currentCol > 0) && (maze[currentRow][currentCol - 1] != '%') & !visitedNode.contains(nxtRowStr+nxtColStr)) 
+			if( (currentCol > 0) && (maze[currentRow][currentCol - 1] != '%') & !visitedNode.contains(nxtRowStr+","+nxtColStr)) 
 			{
 				next = new DFSNode(currentRow, (currentCol-1));
 				currentNode.leftNodeVisited = true;
@@ -118,7 +121,7 @@ public class DepthFirst {
 				Integer newCol = currentCol-1;
 				next.setCol(newCol);
 				next.setRow(newRow);
-				String nodeId = newRow.toString()+newCol.toString();
+				String nodeId = newRow.toString()+","+newCol.toString();
 				visitedNode.add(nodeId);
 				stack.push(next);
 				hasPacmanMoved = true;
@@ -127,8 +130,10 @@ public class DepthFirst {
 			// try up
 			nxtRowStr = String.valueOf(currentRow-1);
 			nxtColStr = String.valueOf(currentCol);
+			char temp = maze[currentRow - 1][currentCol];
+			boolean flag = !visitedNode.contains(nxtRowStr+","+nxtColStr);
 			if(!hasPacmanMoved && currentRow > 0 && maze[currentRow - 1][currentCol] != '%'
-					& !visitedNode.contains(nxtRowStr+nxtColStr)) 
+					& !visitedNode.contains(nxtRowStr+","+nxtColStr)) 
 			{
 				next = new DFSNode((currentRow-1), currentCol);
 				currentNode.upNodeVisited = true;
@@ -136,7 +141,7 @@ public class DepthFirst {
 				Integer newCol = currentCol;
 				next.setCol(newCol);
 				next.setRow(newRow);
-				String nodeId = newRow.toString()+newCol.toString();
+				String nodeId = newRow.toString()+","+newCol.toString();
 				stack.push(next);
 				visitedNode.add(nodeId);
 				hasPacmanMoved = true;
@@ -146,7 +151,7 @@ public class DepthFirst {
 			nxtRowStr = String.valueOf(currentRow);
 			nxtColStr = String.valueOf(currentCol+1);
 			if(!hasPacmanMoved && (currentCol < N-1) && maze[currentRow][currentCol + 1] != '%' 
-					& !visitedNode.contains(nxtRowStr+nxtColStr))
+					& !visitedNode.contains(nxtRowStr+","+nxtColStr))
 			{
 				next = new DFSNode(currentRow, (currentCol+1));
 				currentNode.rightNodeVisited = true;
@@ -154,7 +159,7 @@ public class DepthFirst {
 				Integer newCol = currentCol+1;
 				next.setCol(newCol);
 				next.setRow(newRow);
-				String nodeId = newRow.toString()+newCol.toString();
+				String nodeId = newRow.toString()+","+newCol.toString();
 				visitedNode.add(nodeId);
 				stack.push(next);
 				hasPacmanMoved = true;			
@@ -164,7 +169,7 @@ public class DepthFirst {
 			nxtRowStr = String.valueOf(currentRow+1);
 			nxtColStr = String.valueOf(currentCol);
 			if(!hasPacmanMoved && currentRow < N -1 && maze[currentRow + 1][currentCol] != '%'
-					& !visitedNode.contains(nxtRowStr+nxtColStr)) 
+					& !visitedNode.contains(nxtRowStr+","+nxtColStr)) 
 			{
 				next = new DFSNode((currentRow+1), currentCol);
 				currentNode.downNodeVisited = true;
@@ -172,7 +177,7 @@ public class DepthFirst {
 				Integer newCol = currentCol;
 				next.setCol(newCol);
 				next.setRow(newRow);
-				String nodeId = newRow.toString()+newCol.toString();
+				String nodeId = newRow.toString()+","+newCol.toString();
 				stack.push(next);
 				visitedNode.add(nodeId);
 				hasPacmanMoved = true;
