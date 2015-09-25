@@ -3,6 +3,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Stack;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,26 +19,53 @@ public class DepthFirst {
 	boolean visited = false;
 	DepthFirst prev;
 	private static List<String> visitedNode = new ArrayList<String>();
+	private static String _medMazePath = "C:/Users/Piyush/Desktop/maze.txt";
+	private static String _bigMazePath = "C:/Users/Piyush/Desktop/bigmaze.txt";
+	private static String _openMazePath = "C:/Users/Piyush/Desktop/openMaze.txt";
 
 
 	//generation of Maze
-	static	 final int WIDTH = 37;
-	static final int HEIGHT = 37;
+	static int _Column = 0;
+	static int _Rows = 0;
 
-	static char[][] maze = new char[WIDTH][HEIGHT];
+	static char[][] maze;
 
 
-	public static void loadFile() 
+	public static void loadFile(int option) 
 	{
 		int row= 0;
 		int col = 0;
+		BufferedReader reader = null;
 
 		try 
 		{
-			BufferedReader reader = new BufferedReader(new FileReader("C:/Users/Piyush/Desktop/bigmaze.txt"));
+			if(option ==1)
+			{
+				reader = new BufferedReader(new FileReader(_medMazePath));
+				_Column = 23;
+				_Rows = 23;
+				maze = new char[_Rows][_Column];
+			}
+			else if(option == 2)
+			{
+				reader = new BufferedReader(new FileReader(_bigMazePath));
+				_Column = 37;
+				_Rows = 37;
+				maze = new char[_Rows][_Column];
+			}
+			else if(option == 3)
+			{
+				reader = new BufferedReader(new FileReader(_openMazePath));
+				_Column = 37;
+				_Rows = 20;
+				maze = new char[_Rows][_Column];
+			}
+			
 			String line = "";
+			int len = 0;
 			while((line = reader.readLine()) != null) 
 			{
+				len = line.length();
 				for(col = 0; col < line.length();col++) 
 				{
 					maze[row][col] = line.charAt(col);
@@ -54,9 +82,9 @@ public class DepthFirst {
 
 	public static void printArray() 
 	{
-		for(int row = 0; row <WIDTH ; row++) 
+		for(int row = 0; row <_Rows ; row++) 
 		{
-			for(int col = 0; col <HEIGHT; col++) 
+			for(int col = 0; col <_Column; col++) 
 			{
 				System.out.print(maze[row][col]);
 			}
@@ -69,9 +97,9 @@ public class DepthFirst {
 	public static int[] findEntrance() 
 	{	    	
 		int[] coordinates = {0,0};
-		for(int row = 0; row<WIDTH; row++)
+		for(int row = 0; row<_Rows; row++)
 		{
-			for (int col = 0; col<HEIGHT; col++)
+			for (int col = 0; col<_Column; col++)
 			{
 				if(maze[row][col]== 'P')
 				{
@@ -95,12 +123,11 @@ public class DepthFirst {
 		
 		while(!findDest) 
 		{
+			if(stack.size() == 1)
+				System.out.println("stack size is 1");
 			currentNode = stack.peek();
 			boolean hasPacmanMoved = false;
 			int currentRow = currentNode.getRow(), currentCol= currentNode.getCol();
-			
-			if(stack.size() == 2)
-				System.out.println("stack size is 1");
 
 			if(maze[currentRow][currentCol] == '.') 
 			{
@@ -203,15 +230,49 @@ public class DepthFirst {
 
 	public static void main(String[] args) 
 	{
-		System.out.println("Here is the maze");
-		loadFile();
-		printArray();
+		System.out.println("Select one of the following:");
+		System.out.println("1. Medium Maze");
+		System.out.println("2. Big Maze");
+		System.out.println("3. Open Maze");
+		System.out.println("Any other key to exit");
+		
+		try 
+		{
+			BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
+			String userCommand = userReader.readLine();
+			
+			if(userCommand.equalsIgnoreCase("1"))
+			{
+				loadFile(1);
+			}
+			else if(userCommand.equalsIgnoreCase("2"))
+			{
+				loadFile(2);
+			}
+			else if(userCommand.equalsIgnoreCase("3"))
+			{
+				loadFile(3);
+			}
+			else
+			{
+				System.out.println("Invalid option");
+				return;
+			}
+			
+			System.out.println("Here is the maze");
+			printArray();
 
-		System.out.println("Finding the Shortest Path in DFS...");
+			System.out.println("Finding the Shortest Path in DFS...");
 
-		getPath(maze);
-		System.out.println();
-		System.out.println("The cost for the Shortest path is ");
+			getPath(maze);
+			System.out.println();
+			System.out.println("The cost for the Shortest path is ");
+		}
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

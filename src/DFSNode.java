@@ -24,7 +24,7 @@ public class DFSNode {
 	}
 	
 	// Constructor with row and col.
-	public DFSNode(int col, int row) 
+	public DFSNode( int row, int col) 
 	{
 		this.setCol(col);
 		this.setRow(row);
