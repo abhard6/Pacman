@@ -62,10 +62,8 @@ public class DepthFirst {
 			}
 			
 			String line = "";
-			int len = 0;
 			while((line = reader.readLine()) != null) 
 			{
-				len = line.length();
 				for(col = 0; col < line.length();col++) 
 				{
 					maze[row][col] = line.charAt(col);
@@ -114,7 +112,6 @@ public class DepthFirst {
 
 	public static void getPath(char[][] maze) 
 	{
-		int N = maze.length;
 		int coordinaates[] = findEntrance();
 		DFSNode currentNode = new DFSNode(coordinaates[0], coordinaates[1]);
 		Stack<DFSNode> stack = new Stack<DFSNode>();
@@ -123,8 +120,6 @@ public class DepthFirst {
 		
 		while(!findDest) 
 		{
-			if(stack.size() == 1)
-				System.out.println("stack size is 1");
 			currentNode = stack.peek();
 			boolean hasPacmanMoved = false;
 			int currentRow = currentNode.getRow(), currentCol= currentNode.getCol();
@@ -157,8 +152,8 @@ public class DepthFirst {
 			// try up
 			nxtRowStr = String.valueOf(currentRow-1);
 			nxtColStr = String.valueOf(currentCol);
-			char temp = maze[currentRow - 1][currentCol];
-			boolean flag = !visitedNode.contains(nxtRowStr+","+nxtColStr);
+			//char temp = maze[currentRow - 1][currentCol];
+			//boolean flag = !visitedNode.contains(nxtRowStr+","+nxtColStr);
 			if(!hasPacmanMoved && currentRow > 0 && maze[currentRow - 1][currentCol] != '%'
 					& !visitedNode.contains(nxtRowStr+","+nxtColStr)) 
 			{
@@ -177,7 +172,7 @@ public class DepthFirst {
 			// try right
 			nxtRowStr = String.valueOf(currentRow);
 			nxtColStr = String.valueOf(currentCol+1);
-			if(!hasPacmanMoved && (currentCol < N-1) && maze[currentRow][currentCol + 1] != '%' 
+			if(!hasPacmanMoved && (currentCol < _Column-1) && maze[currentRow][currentCol + 1] != '%' 
 					& !visitedNode.contains(nxtRowStr+","+nxtColStr))
 			{
 				next = new DFSNode(currentRow, (currentCol+1));
@@ -195,7 +190,7 @@ public class DepthFirst {
 			// try down
 			nxtRowStr = String.valueOf(currentRow+1);
 			nxtColStr = String.valueOf(currentCol);
-			if(!hasPacmanMoved && currentRow < N -1 && maze[currentRow + 1][currentCol] != '%'
+			if(!hasPacmanMoved && currentRow < _Rows -1 && maze[currentRow + 1][currentCol] != '%'
 					& !visitedNode.contains(nxtRowStr+","+nxtColStr)) 
 			{
 				next = new DFSNode((currentRow+1), currentCol);
