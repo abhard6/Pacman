@@ -2,218 +2,287 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
-import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
-	public class BFS {
-		int i, j;
-		static int cost =0;
-		BFS prev;
+public class BFS 
+{
 
-		public BFS(int[] i, BFS prev) {
-			this.i = i[0];
-			this.j = i[1];
-			this.prev = prev;
-		}
-		public String toString() {
-			return "[" + i + ", " + j + "]";
-		}
-		 
-		 //generation of Maze
-		 
-	static	 final int WIDTH =  24;
-	     static final int HEIGHT = 24 ;
-	     
-	     static int start_row;
-	     static int start_col;
-	     
-	    static char[][] maze = new char[WIDTH][HEIGHT];
-		 
-		 
-		 public static void loadFile(String fname) {
+	static int cost =0;
+	//BFS prev;
+	int row, col;
+	boolean visited = false;
+	private static List<String> visitedNode = new ArrayList<String>();
+	private static String _medMazePath = "/Users/ashutoshbhardwaj/desktop/maze.txt";
+	private static String _bigMazePath = "/Users/ashutoshbhardwaj/desktop/bigmaze.txt";
+	private static String _openMazePath = "/Users/ashutoshbhardwaj/desktop/openMaze.txt";
 
+	static int _Column = 0;
+	static int _Rows = 0;
 
+	static char[][] maze;
 
-				int row= 0;
-				int col = 0;
+	public static void loadFile(int option) 
+	{
+		int row= 0;
+		int col = 0;
+		BufferedReader reader = null;
 
-				try {
-				    BufferedReader reader = new BufferedReader(new FileReader("/Users/ashutoshbhardwaj/desktop/maze.txt"));
-				    String line;
-				    while((line = reader.readLine()) != null) {
-				        for(col = 0; col < line.length();col++) {
-				            maze[row][col] = line.charAt(col);
-				        }
-				        row++;
-				    }
-
-				    reader.close();
-				} catch(IOException e) {
-				    e.printStackTrace();
-				}
-				}
-
-				public static void printArray() {
-				for(int row = 0; row <WIDTH ; row++) {
-				    for(int col = 0; col <HEIGHT; col++) {
-				        System.out.print(maze[row][col]);
-				    }
-				    System.out.println();
-				}
-				}
-				
-				
-				
-				 public static int[] findEntrance() {
-////			    	
-			    	int[] coordinates = {0,0};
-			    	
-			    	
-			    for(int row = 0; row<WIDTH; row++){
-			    	
-			    	for (int col = 0; col<HEIGHT; col++){
-			    		
-			    		if(maze[row][col]== 'P'){
-			    			start_col = col;
-			    			start_row = row;
-			    			
-			    			coordinates[0]= row;
-			    			coordinates[1]= col;
-			    			return coordinates;
-			    		}
-			    	}
-			    }
-		
-			    return coordinates;
-			    			
-			    		}
-			
-			public static int getcost(){
-				
-				return cost;
+		try 
+		{
+			if(option ==1)
+			{
+				reader = new BufferedReader(new FileReader(_medMazePath));
+				_Column = 23;
+				_Rows = 23;
+				maze = new char[_Rows][_Column];
 			}
-			
+			else if(option == 2)
+			{
+				reader = new BufferedReader(new FileReader(_bigMazePath));
+				_Column = 37;
+				_Rows = 37;
+				maze = new char[_Rows][_Column];
+			}
+			else if(option == 3)
+			{
+				reader = new BufferedReader(new FileReader(_openMazePath));
+				_Column = 37;
+				_Rows = 20;
+				maze = new char[_Rows][_Column];
+			}
 
-		// BFS
-		public static void newshortestPath(char[][] maze) {
-			int N = maze.length;
-			// initial
-			BFS step = new BFS(findEntrance(), null);
-			LinkedList<BFS> queue = new LinkedList<BFS>();
-			queue.add(step);
-			// using set to check if already traversed
-			HashSet<Integer> set = new HashSet<Integer>();
-			boolean findDest = false;
-				while(!queue.isEmpty()) {
-					step = queue.remove();
-					int i = step.i, j = step.j, id;
-					if(maze[i][j] == '.') {	// find dest
-						findDest = true;
-						break;
-					}
-					
-							
-					
-					BFS next;
-					// move left
-					char temp = maze[i][j - 1];
-					if(j > 0 && temp != '%') {
-						id = N * i + (j - 1);
-						if(!set.contains(id)) {
-							set.add(id);
-							int[] a = {i,j-1};
-							next = new BFS(a, step);
-							queue.add(next);
-						}
-					}
-					
-					// move right
-					if(j < N-1 && maze[i][j + 1] != '%') {
-						id = N * i + (j + 1);
-						if(!set.contains(id)) {
-							set.add(id);
-							int[] a = {i,j+1};
-							next = new BFS(a, step);
-							queue.add(next);
-						}
-					}
-					
-					//move up
-					
-					if(i > 0 && maze[i - 1][j] != '%') {
-						id = N * (i - 1) + j;
-						if(!set.contains(id)) {
-							set.add(id);
-							int[] a = {i-1,j};
-							next = new BFS(a, step);
-							queue.add(next);
-						}
-					}
-					
-					
-					// move down
-					if(i < N -1 && maze[i + 1][j] != '%') {
-						id = N * (i + 1) + j;
-						if(!set.contains(id)) {
-							set.add(id);
-							int[] a = {i+1,j};
-							next = new BFS(a, step);
-							queue.add(next);
-						}
-					}
+			String line = "";
+			while((line = reader.readLine()) != null) 
+			{
+				for(col = 0; col < line.length();col++) 
+				{
+					maze[row][col] = line.charAt(col);
 				}
-			
-	
-			if(findDest) {
-				// build path
-				ArrayList<ShortestPath> path = new ArrayList<ShortestPath>();
-				
-				while(step != null) {
-					path.add(step);
-					step = step.prev;
-				}
-				Collections.reverse(path);
-				// print path
-				for(int i = 0; i < path.size(); i++) {
-					if(i == path.size() - 1) {
-						System.out.println(path.get(i));
-					}
-					else {
-						int x = path.get(i).i;
-						int y = path.get(i).j;
-						maze[x][y] = '*';
-						cost++;
-						System.out.print(path.get(i) + " -> ");
-					}
-				}
-				
-				for(int row = 0; row <WIDTH ; row++) {
-				    for(int col = 0; col <HEIGHT; col++) {
-				        System.out.print(maze[col][row]);
-				    }
-				    System.out.println();
+				row++;
+			}
+			reader.close();
+		} 
+		catch(IOException e) 
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public static void printArray() 
+	{
+		for(int row = 0; row <_Rows ; row++) 
+		{
+			for(int col = 0; col <_Column; col++) 
+			{
+				System.out.print(maze[row][col]);
+			}
+			System.out.println();
+		}
+	}
+
+
+
+	public static int[] findEntrance() 
+	{	    	
+		int[] coordinates = {0,0};
+		for(int row = 0; row<_Rows; row++)
+		{
+			for (int col = 0; col<_Column; col++)
+			{
+				if(maze[row][col]== 'P')
+				{
+					coordinates[0]= row;
+					coordinates[1]= col;
+					return coordinates;
 				}
 			}
 		}
+		return coordinates;
+	}
 
-		public static void main(String[] args) {
-				
-			
-			
+
+
+
+	public static int getcost(){
+
+		return cost;
+	}
+
+
+	// BFS
+	public static void newshortestPath(char[][] maze) 
+	{
+		int coordinaates[] = findEntrance();
+		BFSNode currentNode = new BFSNode(coordinaates[0], coordinaates[1], null);
+		LinkedList<BFSNode> queue = new LinkedList<BFSNode>();
+		queue.add(currentNode);
+
+		String id = (String.valueOf(coordinaates[0])+":"+String.valueOf(coordinaates[1]));
+		visitedNode.add(id);
+
+		boolean findDest = false;
+		while(!queue.isEmpty()) 
+		{
+			currentNode = queue.remove();
+			int currentRow = currentNode.getRow(), currentCol= currentNode.getCol();
+			if(maze[currentRow][currentCol] == '.') 
+			{	// find dest
+				findDest = true;
+				break;
+			}
+
+			BFSNode next;
+			String nodeid = "";
+			String nxtRowStr ="";
+			String nxtColStr = "";
+
+			// move down
+			nxtRowStr = String.valueOf(currentRow+1);
+			nxtColStr = String.valueOf(currentCol);
+			nodeid = nxtRowStr+":"+nxtColStr;
+			if(currentRow < _Rows-1 && maze[currentRow+1][currentCol] != '%'  & !visitedNode.contains(nxtRowStr+":"+nxtColStr)) 
+			{
+				next = new BFSNode(currentRow+1,(currentCol), currentNode);
+				next.setCol(Integer.valueOf(nxtColStr));
+				next.setRow(Integer.valueOf(nxtRowStr));
+				visitedNode.add(nodeid);
+				queue.add(next);
+			}	
+
+			// move left
+			nxtRowStr = String.valueOf(currentRow);
+			nxtColStr = String.valueOf(currentCol-1);
+			nodeid = nxtRowStr+":"+nxtColStr;
+			if(currentCol > 0 && maze[currentRow][currentCol - 1] != '%' & !visitedNode.contains(nodeid)) 
+			{
+				next = new BFSNode(currentRow,(currentCol-1), currentNode);
+				Integer newRow = currentRow;
+				Integer newCol = currentCol-1;
+				next.setCol(newCol);
+				next.setRow(newRow);
+				visitedNode.add(nodeid);
+				queue.add(next);
+			}
+
+			// move right
+			nxtRowStr = String.valueOf(currentRow);
+			nxtColStr = String.valueOf(currentCol+1);
+			nodeid = nxtRowStr+":"+nxtColStr;
+			if(currentCol < _Column -1 && maze[currentRow][currentCol + 1] != '%'  & !visitedNode.contains(nodeid)) 
+			{
+				next = new BFSNode(currentRow,(currentCol+1), currentNode);
+				next.setCol(Integer.valueOf(nxtColStr));
+				next.setRow(Integer.valueOf(nxtRowStr));
+				visitedNode.add(nodeid);
+				queue.add(next);
+			}
+
+			//move up
+			nxtRowStr = String.valueOf(currentRow-1);
+			nxtColStr = String.valueOf(currentCol);
+			nodeid = nxtRowStr+":"+nxtColStr;
+			if(currentRow > 0 && maze[currentRow-1][currentCol] != '%'  & !visitedNode.contains(nxtRowStr+":"+nxtColStr)) 
+			{
+				next = new BFSNode((currentRow-1), currentCol, currentNode);
+				next.setCol(Integer.valueOf(nxtColStr));
+				next.setRow(Integer.valueOf(nxtRowStr));
+				visitedNode.add(nodeid);
+				queue.add(next);
+			}
+
+		}
+
+		if(findDest) 
+		{
+			// build path
+			ArrayList<BFSNode> path = new ArrayList<BFSNode>();
+
+			while(currentNode != null) 
+			{
+				path.add(currentNode);
+				currentNode = currentNode.prev;
+			}
+			Collections.reverse(path);
+			// print path
+			for(int i = 0; i < path.size(); i++) 
+			{
+				if(i == path.size() - 1) 
+				{
+					System.out.println(path.get(i));
+				}
+				else 
+				{
+					int x = path.get(i).getRow();
+					int y = path.get(i).getCol();
+					maze[x][y] = '*';
+					cost++;
+					System.out.print(path.get(i) + " -> ");
+				}
+			}
+
+			for(int row = 0; row <_Rows ; row++) 
+			{
+				for(int col = 0; col <_Column; col++) 
+				{
+					System.out.print(maze[row][col]);
+				}
+				System.out.println();
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+
+
+		System.out.println("Select one of the following:");
+		System.out.println("1. Medium Maze");
+		System.out.println("2. Big Maze");
+		System.out.println("3. Open Maze");
+		System.out.println("Any other key to exit");
+
+		try 
+		{
+			BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
+			String userCommand = userReader.readLine();
+
+			if(userCommand.equalsIgnoreCase("1"))
+			{
+				loadFile(1);
+			}
+			else if(userCommand.equalsIgnoreCase("2"))
+			{
+				loadFile(2);
+			}
+			else if(userCommand.equalsIgnoreCase("3"))
+			{
+				loadFile(3);
+			}
+			else
+			{
+				System.out.println("Invalid option");
+				return;
+			}
+
 			System.out.println("Here is the maze");
-			
-			//Mazegeneration array = new Mazegeneration();
-	        loadFile("maze.txt");
-	        printArray();
+			printArray();
 
-			System.out.println("Finding the Shortest Path...");
-			
+			System.out.println("Finding the Shortest Path in BFS...");
+
 			newshortestPath(maze);
+
+			System.out.println();
 			System.out.println("The cost for the Shortest path is " +getcost());
 		}
-	 
-	 }
-	
-	
+		catch (IOException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}
+
+
