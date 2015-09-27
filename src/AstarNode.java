@@ -10,12 +10,12 @@ public class AstarNode {
 	
 	private int row=0;
 	private int col=0;
-	private int g_score=0;
-	private int h_score=0;
-	private int f_score=0;
+	private double g_score=0;
+	private double h_score=0;
+	private double f_score=0;
 	
 	AstarNode parentNode=null;
-
+	private String currentlyFacing = "";
 	boolean leftNodeVisited = false;
 	boolean upNodeVisited = false;
 	boolean rightNodeVisited = false;
@@ -47,16 +47,16 @@ public class AstarNode {
 	public void setCol(int col) {
 		this.col = col;
 	}
-	public int getG_score() {
+	public double getG_score() {
 		return g_score;
 	}
-	public void setG_score(int g_score) {
+	public void setG_score(double g_score) {
 		this.g_score = g_score;
 	}
-	public int getH_score() {
+	public double getH_score() {
 		return h_score;
 	}
-	public void setH_score(int h_score) {
+	public void setH_score(double h_score) {
 		this.h_score = h_score;
 	}
 	public boolean isLeftNodeVisited() {
@@ -84,11 +84,11 @@ public class AstarNode {
 		this.downNodeVisited = downNodeVisited;
 	}
 
-	public int getF_score() {
+	public double getF_score() {
 		return f_score;
 	}
 
-	public void setF_score(int f_score) {
+	public void setF_score(double f_score) {
 		this.f_score = f_score;
 	}
 	
@@ -99,6 +99,13 @@ public class AstarNode {
 	public void setParentNode(AstarNode parentNode) {
 		this.parentNode = parentNode;
 	}
-		
+
+	public String getCurrentlyFacing() {
+		return currentlyFacing;
+	}
+
+	public void setCurrentlyFacing(String currentlyFacing) {
+		this.currentlyFacing = currentlyFacing;
+	}
 
 }
