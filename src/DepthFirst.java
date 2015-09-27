@@ -16,12 +16,13 @@ import java.util.List;
 public class DepthFirst {
 	int row, col;
 	static int cost =0;
+	static int noOfNodesexpanded = 0;
 	boolean visited = false;
 	DepthFirst prev;
 	private static List<String> visitedNode = new ArrayList<String>();
-	private static String _medMazePath = "C:/Users/Piyush/Desktop/maze.txt";
-	private static String _bigMazePath = "C:/Users/Piyush/Desktop/bigmaze.txt";
-	private static String _openMazePath = "C:/Users/Piyush/Desktop/openMaze.txt";
+	private static String _medMazePath = "/Users/ashutoshbhardwaj/desktop/maze.txt";
+	private static String _bigMazePath = "/Users/ashutoshbhardwaj/desktop/bigmaze.txt";
+	private static String _openMazePath = "/Users/ashutoshbhardwaj/desktop/openMaze.txt";
 
 
 	//generation of Maze
@@ -60,7 +61,7 @@ public class DepthFirst {
 				_Rows = 20;
 				maze = new char[_Rows][_Column];
 			}
-			
+
 			String line = "";
 			while((line = reader.readLine()) != null) 
 			{
@@ -110,6 +111,17 @@ public class DepthFirst {
 		return coordinates;
 	}
 
+	public static int getcost(){
+
+		return cost;
+	}
+
+	public static int getnoOfNodesexpanded(){
+
+
+		return noOfNodesexpanded;
+	}
+
 	public static void getPath(char[][] maze) 
 	{
 		int coordinaates[] = findEntrance();
@@ -117,7 +129,8 @@ public class DepthFirst {
 		Stack<DFSNode> stack = new Stack<DFSNode>();
 		stack.push(currentNode);
 		boolean findDest = false;
-		
+		visitedNode.add(String.valueOf(coordinaates[0])+","+String.valueOf(coordinaates[1]));
+
 		while(!findDest) 
 		{
 			currentNode = stack.peek();
@@ -149,6 +162,23 @@ public class DepthFirst {
 				hasPacmanMoved = true;
 			}
 
+			// try down
+			nxtRowStr = String.valueOf(currentRow+1);
+			nxtColStr = String.valueOf(currentCol);
+			if(!hasPacmanMoved && currentRow < _Rows -1 && maze[currentRow + 1][currentCol] != '%'
+					& !visitedNode.contains(nxtRowStr+","+nxtColStr)) 
+			{
+				next = new DFSNode((currentRow+1), currentCol);
+				currentNode.downNodeVisited = true;
+				Integer newRow = currentRow+1;
+				Integer newCol = currentCol;
+				next.setCol(newCol);
+				next.setRow(newRow);
+				String nodeId = newRow.toString()+","+newCol.toString();
+				stack.push(next);
+				visitedNode.add(nodeId);
+				hasPacmanMoved = true;
+			}
 			// try up
 			nxtRowStr = String.valueOf(currentRow-1);
 			nxtColStr = String.valueOf(currentCol);
@@ -186,25 +216,7 @@ public class DepthFirst {
 				stack.push(next);
 				hasPacmanMoved = true;			
 			}
-				
-			// try down
-			nxtRowStr = String.valueOf(currentRow+1);
-			nxtColStr = String.valueOf(currentCol);
-			if(!hasPacmanMoved && currentRow < _Rows -1 && maze[currentRow + 1][currentCol] != '%'
-					& !visitedNode.contains(nxtRowStr+","+nxtColStr)) 
-			{
-				next = new DFSNode((currentRow+1), currentCol);
-				currentNode.downNodeVisited = true;
-				Integer newRow = currentRow+1;
-				Integer newCol = currentCol;
-				next.setCol(newCol);
-				next.setRow(newRow);
-				String nodeId = newRow.toString()+","+newCol.toString();
-				stack.push(next);
-				visitedNode.add(nodeId);
-				hasPacmanMoved = true;
-			}
-			
+
 			// Pacman couldn't move! Pop the current node and backtrack.
 			if(!hasPacmanMoved)
 			{
@@ -215,27 +227,44 @@ public class DepthFirst {
 
 		if(findDest) 
 		{
+			cost = stack.size();
 			while(!stack.isEmpty())
 			{
+
 				DFSNode d = stack.pop();
+				//cost++;
 				System.out.print("["+d.getRow()+", "+d.getCol()+"]<--");
+				maze[d.getRow()][d.getCol()] = '.';
+			}
+			System.out.println();
+
+			for(int row = 0; row <_Rows ; row++) 
+			{
+				for(int col = 0; col <_Column; col++) 
+				{
+					System.out.print(maze[row][col]);
+				}
+				System.out.println();
 			}
 		}
 	}
 
 	public static void main(String[] args) 
 	{
+
+
+
 		System.out.println("Select one of the following:");
 		System.out.println("1. Medium Maze");
 		System.out.println("2. Big Maze");
 		System.out.println("3. Open Maze");
 		System.out.println("Any other key to exit");
-		
+
 		try 
 		{
 			BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
 			String userCommand = userReader.readLine();
-			
+
 			if(userCommand.equalsIgnoreCase("1"))
 			{
 				loadFile(1);
@@ -253,7 +282,7 @@ public class DepthFirst {
 				System.out.println("Invalid option");
 				return;
 			}
-			
+
 			System.out.println("Here is the maze");
 			printArray();
 
@@ -261,7 +290,20 @@ public class DepthFirst {
 
 			getPath(maze);
 			System.out.println();
-			System.out.println("The cost for the Shortest path is ");
+			System.out.println("The cost for the Shortest path is " + getcost());
+
+			System.out.println("The Expanded Nodes for DFS are...");	
+
+			for( int i =0; i<visitedNode.size(); i++){
+
+				System.out.print(visitedNode.get(i)+ "->");
+			}
+
+			System.out.println();
+
+			int noOfNodesExpanded = visitedNode.size();
+			System.out.println("The total number of Nodes Expanded for DFS are" + " " +noOfNodesExpanded);
+
 		}
 		catch (IOException e) 
 		{

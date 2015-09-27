@@ -11,6 +11,8 @@ public class GreedyNode {
 	private int col=0;
 	private int row=0;
 	private int score=0;
+	
+	GreedyNode prev;
 
 	boolean leftNodeVisited = false;
 	boolean upNodeVisited = false;
@@ -26,14 +28,15 @@ public class GreedyNode {
 	}
 
 	// Constructor with row and col.
-	public GreedyNode(int col, int row) 
+	public GreedyNode(int row, int col, GreedyNode prev) 
 	{
 		this.setCol(col);
 		this.setRow(row);
+		this.prev= prev;
 	}
 
 	// Constructor with row and col.
-	public GreedyNode(int col, int row, int score) 
+	public GreedyNode(int row, int col, int score) 
 	{
 		this.setCol(col);
 		this.setRow(row);
@@ -41,7 +44,7 @@ public class GreedyNode {
 	}
 
 	//Constructor with all fields
-	public GreedyNode(int col, int row, boolean leftNodeVisited,
+	public GreedyNode(int row, int col, boolean leftNodeVisited,
 			boolean upNodeVisited, boolean rightNodeVisited,
 			boolean downNodeVisited) 
 	{

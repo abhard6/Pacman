@@ -140,18 +140,7 @@ public class BFS
 			String nxtRowStr ="";
 			String nxtColStr = "";
 
-			// move down
-			nxtRowStr = String.valueOf(currentRow+1);
-			nxtColStr = String.valueOf(currentCol);
-			nodeid = nxtRowStr+":"+nxtColStr;
-			if(currentRow < _Rows-1 && maze[currentRow+1][currentCol] != '%'  & !visitedNode.contains(nxtRowStr+":"+nxtColStr)) 
-			{
-				next = new BFSNode(currentRow+1,(currentCol), currentNode);
-				next.setCol(Integer.valueOf(nxtColStr));
-				next.setRow(Integer.valueOf(nxtRowStr));
-				visitedNode.add(nodeid);
-				queue.add(next);
-			}	
+				
 
 			// move left
 			nxtRowStr = String.valueOf(currentRow);
@@ -167,32 +156,53 @@ public class BFS
 				visitedNode.add(nodeid);
 				queue.add(next);
 			}
-
+			
+			
 			// move right
-			nxtRowStr = String.valueOf(currentRow);
-			nxtColStr = String.valueOf(currentCol+1);
-			nodeid = nxtRowStr+":"+nxtColStr;
-			if(currentCol < _Column -1 && maze[currentRow][currentCol + 1] != '%'  & !visitedNode.contains(nodeid)) 
-			{
-				next = new BFSNode(currentRow,(currentCol+1), currentNode);
-				next.setCol(Integer.valueOf(nxtColStr));
-				next.setRow(Integer.valueOf(nxtRowStr));
-				visitedNode.add(nodeid);
-				queue.add(next);
-			}
+						nxtRowStr = String.valueOf(currentRow);
+						nxtColStr = String.valueOf(currentCol+1);
+						nodeid = nxtRowStr+":"+nxtColStr;
+						if(currentCol < _Column -1 && maze[currentRow][currentCol + 1] != '%'  & !visitedNode.contains(nodeid)) 
+						{
+							next = new BFSNode(currentRow,(currentCol+1), currentNode);
+							next.setCol(Integer.valueOf(nxtColStr));
+							next.setRow(Integer.valueOf(nxtRowStr));
+							visitedNode.add(nodeid);
+							queue.add(next);
+						}
+			
+						
+						//move up
+						nxtRowStr = String.valueOf(currentRow-1);
+						nxtColStr = String.valueOf(currentCol);
+						nodeid = nxtRowStr+":"+nxtColStr;
+						if(currentRow > 0 && maze[currentRow-1][currentCol] != '%'  & !visitedNode.contains(nxtRowStr+":"+nxtColStr)) 
+						{
+							next = new BFSNode((currentRow-1), currentCol, currentNode);
+							next.setCol(Integer.valueOf(nxtColStr));
+							next.setRow(Integer.valueOf(nxtRowStr));
+							visitedNode.add(nodeid);
+							queue.add(next);
+						}		
+						
+			
+			
+			
+			
+			// move down
+						nxtRowStr = String.valueOf(currentRow+1);
+						nxtColStr = String.valueOf(currentCol);
+						nodeid = nxtRowStr+":"+nxtColStr;
+						if(currentRow < _Rows-1 && maze[currentRow+1][currentCol] != '%'  & !visitedNode.contains(nxtRowStr+":"+nxtColStr)) 
+						{
+							next = new BFSNode(currentRow+1,(currentCol), currentNode);
+							next.setCol(Integer.valueOf(nxtColStr));
+							next.setRow(Integer.valueOf(nxtRowStr));
+							visitedNode.add(nodeid);
+							queue.add(next);
+						}
 
-			//move up
-			nxtRowStr = String.valueOf(currentRow-1);
-			nxtColStr = String.valueOf(currentCol);
-			nodeid = nxtRowStr+":"+nxtColStr;
-			if(currentRow > 0 && maze[currentRow-1][currentCol] != '%'  & !visitedNode.contains(nxtRowStr+":"+nxtColStr)) 
-			{
-				next = new BFSNode((currentRow-1), currentCol, currentNode);
-				next.setCol(Integer.valueOf(nxtColStr));
-				next.setRow(Integer.valueOf(nxtRowStr));
-				visitedNode.add(nodeid);
-				queue.add(next);
-			}
+			
 
 		}
 
@@ -218,9 +228,9 @@ public class BFS
 				{
 					int x = path.get(i).getRow();
 					int y = path.get(i).getCol();
-					maze[x][y] = '*';
+					maze[x][y] = '.';
 					cost++;
-					System.out.print(path.get(i) + " -> ");
+					//System.out.print(path.get(i) + " -> ");
 				}
 			}
 
@@ -276,6 +286,23 @@ public class BFS
 
 			System.out.println();
 			System.out.println("The cost for the Shortest path is " +getcost());
+			
+			System.out.print("The Expanded Nodes for BFS are...");
+			
+			for(int i = 0; i< visitedNode.size(); i++){
+				
+				
+				System.out.print(visitedNode.get(i) + " -> ");
+				
+				
+			}
+			
+			System.out.println();
+			
+			int noOfNodesexpanded = visitedNode.size();
+			System.out.println("The total number of Nodes Expanded are" + " " + noOfNodesexpanded);
+			
+			
 		}
 		catch (IOException e) 
 		{
