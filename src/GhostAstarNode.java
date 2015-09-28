@@ -16,10 +16,16 @@ public class GhostAstarNode {
 
 	GhostAstarNode parentNode=null;
 	private String currentlyFacing = "";
-	boolean leftNodeVisited = false;
-	boolean upNodeVisited = false;
-	boolean rightNodeVisited = false;
-	boolean downNodeVisited = false;
+
+	public int[] ghost = new int[2];
+	public int gFacing = 1;
+
+  public GhostAstarNode(GhostAstarNode copy) {
+    if(copy != null) {
+      this.row = copy.row;
+      this.col = copy.col;
+    }
+  }
 
 	public GhostAstarNode(int row, int col)
 	{
@@ -58,30 +64,6 @@ public class GhostAstarNode {
 	}
 	public void setH_score(double h_score) {
 		this.h_score = h_score;
-	}
-	public boolean isLeftNodeVisited() {
-		return leftNodeVisited;
-	}
-	public void setLeftNodeVisited(boolean leftNodeVisited) {
-		this.leftNodeVisited = leftNodeVisited;
-	}
-	public boolean isUpNodeVisited() {
-		return upNodeVisited;
-	}
-	public void setUpNodeVisited(boolean upNodeVisited) {
-		this.upNodeVisited = upNodeVisited;
-	}
-	public boolean isRightNodeVisited() {
-		return rightNodeVisited;
-	}
-	public void setRightNodeVisited(boolean rightNodeVisited) {
-		this.rightNodeVisited = rightNodeVisited;
-	}
-	public boolean isDownNodeVisited() {
-		return downNodeVisited;
-	}
-	public void setDownNodeVisited(boolean downNodeVisited) {
-		this.downNodeVisited = downNodeVisited;
 	}
 
 	public double getF_score() {

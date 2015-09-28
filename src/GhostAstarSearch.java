@@ -12,14 +12,9 @@ import java.util.*;
  * @author Piyush
  *
  */
-public class AstarSearch {
+public class GhostAstarSearch {
 
-	private static Map<String, AstarNode> _visitedNode = new HashMap<>();
-	private static String _medMazePath = "./mediumMaze.txt";
-	private static String _bigMazePath = "./bigMaze.txt";
-	private static String _openMazePath = "./openMaze.txt";
-	private static String _smallTurnPath = "./smallTurns.txt";
-	private static String _largeTurnPath = "./bigTurns.txt";
+	private static Map<String, GhostAstarNode> _visitedNode = new HashMap<>();
 
   private static String _smallGhost = "./smallGhost.txt";
   private static String _mediumGhost = "./mediumGhost.txt";
@@ -35,17 +30,13 @@ public class AstarSearch {
 	private static int[] _currentNode = {0,0};
   private static int[] _ghost = {0,0};
 
+  private static Visualization visual;
+
 	public static void main(String[] args) 
 	{
-		System.out.println("Select one of the following:");
-		System.out.println("1. Medium Maze");
-		System.out.println("2. Big Maze");
-		System.out.println("3. Open Maze");
-		System.out.println("4. Small Turn Maze");
-		System.out.println("5. Big Turn Maze");
-    System.out.println("6. Small Ghost Maze");
-    System.out.println("7. Medium Ghost Maze");
-    System.out.println("8. Big Ghost Maze");
+    System.out.println("1. Small Ghost Maze");
+    System.out.println("2. Medium Ghost Maze");
+    System.out.println("3. Big Ghost Maze");
     System.out.println("Any other key to exit");
 
 		try 
@@ -69,16 +60,16 @@ public class AstarSearch {
 	
 	public static void findPath()
 	{
-		AstarNode node = new AstarNode(_currentNode[0],_currentNode[1],null);
-		node.setG_score(calculate_g_Score(_currentNode[0], _currentNode[1]));
+		GhostAstarNode node = new GhostAstarNode(_currentNode[0],_currentNode[1],null);
+		node.setG_score(0);
     node.setH_score(calculate_h_Score(_currentNode[0], _currentNode[1]));
     node.setF_score(node.getG_score()+node.getH_score());
     node.setCurrentlyFacing("r");
     node.ghost = _ghost;
     node.gFacing = 1;
 
-		Comparator<AstarNode> comparator = new NodeComparator();
-		PriorityQueue<AstarNode> pQueue = new PriorityQueue<>(5000, comparator);
+		Comparator<GhostAstarNode> comparator = new NodeComparator();
+		PriorityQueue<GhostAstarNode> pQueue = new PriorityQueue<>(5000, comparator);
 		
 		pQueue.add(node);
 		_visitedNode.put(node.getRow()+":"+node.getCol(), node);
@@ -98,7 +89,7 @@ public class AstarSearch {
 				break;
 			}
 			
-			AstarNode next;
+			GhostAstarNode next;
 			for(int neighborsDiscovered =0; neighborsDiscovered<4; neighborsDiscovered++)
 			{
         int nxtRow=-1, nxtCol=-1;
@@ -140,13 +131,13 @@ public class AstarSearch {
                 && !_visitedNode.containsKey(nxtRow+":"+nxtCol)
                 && !(nxtRow == nghost[0] && nxtCol == nghost[1]) )
         {
-          next = new AstarNode(nxtRow,nxtCol,node);
+          next = new GhostAstarNode(nxtRow,nxtCol,node);
           next.ghost[0] = nghost[0];
           next.ghost[1] = nghost[1];
           next.gFacing = nghost[2];
           next.setRow(nxtRow);
           next.setCol(nxtCol);
-          next.setG_score(calculate_g_Score(nxtRow, nxtCol));
+          next.setG_score(node.getG_score()+1);
           next.setH_score(calculate_h_Score(nxtRow, nxtCol));
           next.setF_score(next.getG_score()+next.getH_score());
           next.setCurrentlyFacing(facing);
@@ -156,20 +147,27 @@ public class AstarSearch {
 			}
 
       int[] nkghost = moveGhost(node.ghost, node.gFacing, 2);
-      node.ghost[0] = nkghost[0];
-      node.ghost[1] = nkghost[1];
-      node.gFacing = nkghost[2];
-      node.setG_score(calculate_g_Score(currentRow, currentCol));
-      node.setH_score(calculate_h_Score(currentRow, currentCol));
-      node.setF_score(node.getG_score() + node.getH_score());
-      pQueue.add(node);
+			GhostAstarNode loiter = new GhostAstarNode(currentRow, currentCol);
+			loiter.ghost[0] = nkghost[0];
+			loiter.ghost[1] = nkghost[1];
+			loiter.gFacing = nkghost[2];
+			loiter.setG_score(2+node.getG_score());
+			loiter.setH_score(calculate_h_Score(currentRow, currentCol));
+			loiter.setF_score(node.getG_score() + node.getH_score());
+      loiter.setParentNode(new GhostAstarNode(node.parentNode));
+      loiter.getParentNode().ghost[0] = nghost[0];
+      loiter.getParentNode().ghost[1] = nghost[1];
+      loiter.getParentNode().gFacing = nghost[2];
+      loiter.getParentNode().setParentNode(node);
+      pQueue.add(loiter);
+
       _visitedNode.remove(currentRow + ":" + currentCol);
 		}
 		
 		if(!pathFound)
 			return;
 		
-		ArrayList<AstarNode> printList = new ArrayList<AstarNode>();
+		ArrayList<GhostAstarNode> printList = new ArrayList<GhostAstarNode>();
 		while(node!=null)
 		{
 			printList.add(node);
@@ -195,28 +193,30 @@ public class AstarSearch {
 				System.out.print(printList.get(i) + " <- ");
 			}
 		}
+
+    visual.animate(printList);
 		
 	}
 
   public static int[] moveGhost(int[] ghost, int facing, int k) {
     int[] ret = new int[]{ghost[0], ghost[1], facing};
     for(int i=0;i<k;i++) {
-      if (_maze[ghost[0] + facing][ghost[1]] == 'g') {
+      if (Character.toLowerCase(_maze[ghost[0] + facing][ghost[1]]) == 'g') {
         ret[0] = ret[0] + facing;
         ret[1] = ghost[1];
         ret[2] = facing;
-      } else if (_maze[ghost[0]][ghost[1] + facing] == 'g') {
+      } else if (Character.toLowerCase(_maze[ghost[0]][ghost[1] + facing]) == 'g') {
         ret[0] = ghost[0];
-        ret[1] = ghost[1] + facing;
+        ret[1] = ret[1] + facing;
         ret[2] = facing;
       } else {
-        if (_maze[ghost[0] - facing][ghost[1]] == 'g') {
-          ret[0] = ghost[0] - facing;
+        if (Character.toLowerCase(_maze[ghost[0] - facing][ghost[1]]) == 'g') {
+          ret[0] = ret[0] - facing;
           ret[1] = ghost[1];
           ret[2] = -1 * facing;
-        } else if (_maze[ghost[0]][ghost[1] - facing] == 'g') {
+        } else if (Character.toLowerCase(_maze[ghost[0]][ghost[1] - facing]) == 'g') {
           ret[0] = ghost[0];
-          ret[1] = ghost[1] - facing;
+          ret[1] = ret[1] - facing;
           ret[2] = -1 * facing;
         }
       }
@@ -263,13 +263,20 @@ public class AstarSearch {
 	public static void loadFile() throws IOException
 	{
 		BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
-		int userCommand = Integer.parseInt(userReader.readLine());
+    int userCommand = -1;
+    try {
+      userCommand = Integer.parseInt(userReader.readLine());
+    }catch(NumberFormatException ex) {
+      System.out.println("Goodbye!");
+      System.exit(0);
+    }
 
 		if(userCommand >=0 && userCommand < 9){
       loadFile(userCommand);
     } else
 		{
-			System.out.println("Invalid option");
+			System.out.println("Goodbye!");
+      System.exit(0);
 			return;
 		}
 
@@ -287,41 +294,16 @@ public class AstarSearch {
 		{
       switch(option) {
         case 1:
-          mapFile = _medMazePath;
-          _Column = 23;
-          _Rows = 23;
-          break;
-        case 2:
-          mapFile = _bigMazePath;
-          _Column = 37;
-          _Rows = 37;
-          break;
-        case 3:
-          mapFile = _openMazePath;
-          _Column = 37;
-          _Rows = 20;
-          break;
-        case 4:
-          mapFile = _smallTurnPath;
-          _Column = 32;
-          _Rows = 11;
-          break;
-        case 5:
-          mapFile = _largeTurnPath;
-          _Column = 37;
-          _Rows = 37;
-          break;
-        case 6:
           mapFile = _smallGhost;
           _Column = 32;
-          _Rows = 11;
+          _Rows = 32;
           break;
-        case 7:
+        case 2:
           mapFile = _mediumGhost;
           _Column = 23;
           _Rows = 23;
           break;
-        case 8:
+        case 3:
           mapFile = _bigGhost;
           _Column = 37;
           _Rows = 37;
@@ -342,6 +324,7 @@ public class AstarSearch {
 				row++;
 			}
 			reader.close();
+      visual = new Visualization(_maze);
 		} 
 		catch(IOException e) 
 		{
@@ -361,39 +344,14 @@ public class AstarSearch {
 		}
 	}
 
-
-
-	public static int[] findEntrance() 
-	{	    	
-		int[] coordinates = {0,0};
-		for(int row = 0; row<_Rows; row++)
-		{
-			for (int col = 0; col<_Column; col++)
-			{
-				if(_maze[row][col]== 'P')
-				{
-					coordinates[0]= row;
-					coordinates[1]= col;
-					return coordinates;
-				}
-			}
-		}
-		return coordinates;
-	}
-
-	public static int getcost(){
-
-		return _cost;
-	}
-
 	
-	public static int computeCost(ArrayList<AstarNode> printList)
+	public static int computeCost(ArrayList<GhostAstarNode> printList)
 	{
 		int cost = 0;
-		AstarNode prevnode = printList.get(0);
+		GhostAstarNode prevnode = printList.get(0);
 		for(int i = 1; i < printList.size(); i++)
 		{
-			AstarNode currnode = printList.get(i);
+			GhostAstarNode currnode = printList.get(i);
 			String prevNodeFacing = prevnode.getCurrentlyFacing();
 			String currNodeFacing = currnode.getCurrentlyFacing();
 			
@@ -438,9 +396,9 @@ public class AstarSearch {
 		return score;
 	}
 	
-	public static class NodeComparator implements Comparator<AstarNode>
+	public static class NodeComparator implements Comparator<GhostAstarNode>
 	{
-		/*public int compare(AstarNode node1, AstarNode node2) 
+		/*public int compare(GhostAstarNode node1, GhostAstarNode node2) 
 		{
 			if(node1.getF_score() - node2.getF_score() > 1.0)
 				return 2;
@@ -454,7 +412,7 @@ public class AstarSearch {
 				return -2;
 		}*/
 		
-		public int compare(AstarNode node1, AstarNode node2) 
+		public int compare(GhostAstarNode node1, GhostAstarNode node2) 
 		{
 			if(node1.getF_score() - node2.getF_score() > 0.0)
 				return 2;
