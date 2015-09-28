@@ -23,9 +23,9 @@ public class GreedyBestFirst {
 	 */
 	
 	
-	private static String _medMazePath = "/Users/ashutoshbhardwaj/desktop/maze.txt";
-	private static String _bigMazePath = "/Users/ashutoshbhardwaj/desktop/bigmaze.txt";
-	private static String _openMazePath = "/Users/ashutoshbhardwaj/desktop/openMaze.txt";
+	private static String _medMazePath = "C:/Users/Piyush/Desktop/maze.txt";
+	private static String _bigMazePath = "C:/Users/Piyush/Desktop/bigmaze.txt";
+	private static String _openMazePath = "C:/Users/Piyush/Desktop/openMaze.txt";
 
 	static int _Column = 0;
 	static int _Rows = 0;

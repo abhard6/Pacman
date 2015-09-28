@@ -16,9 +16,9 @@ public class BFS
 	int row, col;
 	boolean visited = false;
 	private static List<String> visitedNode = new ArrayList<String>();
-	private static String _medMazePath = "/Users/ashutoshbhardwaj/desktop/maze.txt";
-	private static String _bigMazePath = "/Users/ashutoshbhardwaj/desktop/bigmaze.txt";
-	private static String _openMazePath = "/Users/ashutoshbhardwaj/desktop/openMaze.txt";
+	private static String _medMazePath = "C:/Users/Piyush/Desktop/maze.txt";
+	private static String _bigMazePath = "C:/Users/Piyush/Desktop/bigmaze.txt";
+	private static String _openMazePath = "C:/Users/Piyush/Desktop/openMaze.txt";
 
 	static int _Column = 0;
 	static int _Rows = 0;
@@ -139,8 +139,47 @@ public class BFS
 			String nodeid = "";
 			String nxtRowStr ="";
 			String nxtColStr = "";
+			
 
-				
+			// move down
+			nxtRowStr = String.valueOf(currentRow+1);
+			nxtColStr = String.valueOf(currentCol);
+			nodeid = nxtRowStr+":"+nxtColStr;
+			if(currentRow < _Rows-1 && maze[currentRow+1][currentCol] != '%'  & !visitedNode.contains(nxtRowStr+":"+nxtColStr)) 
+			{
+				next = new BFSNode(currentRow+1,(currentCol), currentNode);
+				next.setCol(Integer.valueOf(nxtColStr));
+				next.setRow(Integer.valueOf(nxtRowStr));
+				visitedNode.add(nodeid);
+				queue.add(next);
+			}
+
+			// move right
+			nxtRowStr = String.valueOf(currentRow);
+			nxtColStr = String.valueOf(currentCol+1);
+			nodeid = nxtRowStr+":"+nxtColStr;
+			if(currentCol < _Column -1 && maze[currentRow][currentCol + 1] != '%'  & !visitedNode.contains(nodeid)) 
+			{
+				next = new BFSNode(currentRow,(currentCol+1), currentNode);
+				next.setCol(Integer.valueOf(nxtColStr));
+				next.setRow(Integer.valueOf(nxtRowStr));
+				visitedNode.add(nodeid);
+				queue.add(next);
+			}
+
+			//move up
+			nxtRowStr = String.valueOf(currentRow-1);
+			nxtColStr = String.valueOf(currentCol);
+			nodeid = nxtRowStr+":"+nxtColStr;
+			if(currentRow > 0 && maze[currentRow-1][currentCol] != '%'  & !visitedNode.contains(nxtRowStr+":"+nxtColStr)) 
+			{
+				next = new BFSNode((currentRow-1), currentCol, currentNode);
+				next.setCol(Integer.valueOf(nxtColStr));
+				next.setRow(Integer.valueOf(nxtRowStr));
+				visitedNode.add(nodeid);
+				queue.add(next);
+			}		
+			
 
 			// move left
 			nxtRowStr = String.valueOf(currentRow);
@@ -156,53 +195,6 @@ public class BFS
 				visitedNode.add(nodeid);
 				queue.add(next);
 			}
-			
-			
-			// move right
-						nxtRowStr = String.valueOf(currentRow);
-						nxtColStr = String.valueOf(currentCol+1);
-						nodeid = nxtRowStr+":"+nxtColStr;
-						if(currentCol < _Column -1 && maze[currentRow][currentCol + 1] != '%'  & !visitedNode.contains(nodeid)) 
-						{
-							next = new BFSNode(currentRow,(currentCol+1), currentNode);
-							next.setCol(Integer.valueOf(nxtColStr));
-							next.setRow(Integer.valueOf(nxtRowStr));
-							visitedNode.add(nodeid);
-							queue.add(next);
-						}
-			
-						
-						//move up
-						nxtRowStr = String.valueOf(currentRow-1);
-						nxtColStr = String.valueOf(currentCol);
-						nodeid = nxtRowStr+":"+nxtColStr;
-						if(currentRow > 0 && maze[currentRow-1][currentCol] != '%'  & !visitedNode.contains(nxtRowStr+":"+nxtColStr)) 
-						{
-							next = new BFSNode((currentRow-1), currentCol, currentNode);
-							next.setCol(Integer.valueOf(nxtColStr));
-							next.setRow(Integer.valueOf(nxtRowStr));
-							visitedNode.add(nodeid);
-							queue.add(next);
-						}		
-						
-			
-			
-			
-			
-			// move down
-						nxtRowStr = String.valueOf(currentRow+1);
-						nxtColStr = String.valueOf(currentCol);
-						nodeid = nxtRowStr+":"+nxtColStr;
-						if(currentRow < _Rows-1 && maze[currentRow+1][currentCol] != '%'  & !visitedNode.contains(nxtRowStr+":"+nxtColStr)) 
-						{
-							next = new BFSNode(currentRow+1,(currentCol), currentNode);
-							next.setCol(Integer.valueOf(nxtColStr));
-							next.setRow(Integer.valueOf(nxtRowStr));
-							visitedNode.add(nodeid);
-							queue.add(next);
-						}
-
-			
 
 		}
 
@@ -216,6 +208,7 @@ public class BFS
 				path.add(currentNode);
 				currentNode = currentNode.prev;
 			}
+			cost = path.size();
 			Collections.reverse(path);
 			// print path
 			for(int i = 0; i < path.size(); i++) 
@@ -229,7 +222,7 @@ public class BFS
 					int x = path.get(i).getRow();
 					int y = path.get(i).getCol();
 					maze[x][y] = '.';
-					cost++;
+					//cost++;
 					//System.out.print(path.get(i) + " -> ");
 				}
 			}

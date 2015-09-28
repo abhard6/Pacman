@@ -13,6 +13,7 @@ public class AstarNode {
 	private double g_score=0;
 	private double h_score=0;
 	private double f_score=0;
+	private double e_score=0;
 	
 	AstarNode parentNode=null;
 	private String currentlyFacing = "";
@@ -20,6 +21,9 @@ public class AstarNode {
 	boolean upNodeVisited = false;
 	boolean rightNodeVisited = false;
 	boolean downNodeVisited = false;
+	int time = -1;
+  int[] ghost = new int[]{0,0};
+  int gFacing = 1;
 	
 	public AstarNode(int row, int col) 
 	{
@@ -106,6 +110,14 @@ public class AstarNode {
 
 	public void setCurrentlyFacing(String currentlyFacing) {
 		this.currentlyFacing = currentlyFacing;
+	}
+
+	public double getE_score() {
+		return e_score;
+	}
+
+	public void setE_score(double e_score) {
+		this.e_score = e_score;
 	}
 
 }

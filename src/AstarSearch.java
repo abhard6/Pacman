@@ -53,8 +53,8 @@ public class AstarSearch {
 			System.out.println("Finding the Shortest Path by A* algorithm");
 			printArray();
 			System.out.println();
-			System.out.println("Cost is : "+_cost);
-			System.out.println(_visitedNode.size());
+			System.out.print("Cost is : "+_cost +" And ");
+			System.out.println("Nbr of Expanded nodes:"+_visitedNode.size());
 			
 		}
 		catch(IOException ioe)
@@ -69,6 +69,7 @@ public class AstarSearch {
 		AstarNode node = new AstarNode(_currentNode[0],_currentNode[1],null);
 		node.setG_score(calculate_g_Score(_currentNode[0], _currentNode[1]));
 		node.setH_score(calculate_h_Score(_currentNode[0], _currentNode[1]));
+		node.setE_score(calculate_euclidean_Score(_currentNode[0], _currentNode[1]));
 		node.setF_score(node.getG_score()+node.getH_score());
 		node.setCurrentlyFacing("r");
 		
@@ -102,7 +103,7 @@ public class AstarSearch {
 			{
 				switch(neighborsDiscovered)
 				{
-					case 1:
+					case 0:
 						// try left
 						String nxtRowStr = String.valueOf(currentRow);
 						String nxtColStr = String.valueOf(currentCol-1);
@@ -117,7 +118,8 @@ public class AstarSearch {
 							next.setCol(newCol);
 							next.setG_score(calculate_g_Score(newRow, newCol));
 							next.setH_score(calculate_h_Score(newRow, newCol));
-							next.setF_score(next.getG_score()+next.getH_score());
+							next.setE_score(calculate_euclidean_Score(newRow, newCol));
+							next.setE_score(next.getG_score()+next.getH_score());
 							next.setCurrentlyFacing("l");
 							pQueue.add(next);
 							_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
@@ -125,7 +127,7 @@ public class AstarSearch {
 						}
 						break;
 						
-					case 0:
+					case 1:
 						//try down
 						nxtRowStr = String.valueOf(currentRow+1);
 						nxtColStr = String.valueOf(currentCol);
@@ -141,6 +143,7 @@ public class AstarSearch {
 							next.setG_score(calculate_g_Score(newRow, newCol));
 							next.setH_score(calculate_h_Score(newRow, newCol));
 							next.setF_score(next.getG_score()+next.getH_score());
+							next.setE_score(calculate_euclidean_Score(newRow, newCol));
 							next.setCurrentlyFacing("d");
 							pQueue.add(next);
 							_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
@@ -148,7 +151,7 @@ public class AstarSearch {
 						}
 						break;
 						
-					case 2:
+					case 3:
 						// try right
 						nxtRowStr = String.valueOf(currentRow);
 						nxtColStr = String.valueOf(currentCol+1);
@@ -164,6 +167,7 @@ public class AstarSearch {
 							next.setG_score(calculate_g_Score(newRow, newCol));
 							next.setH_score(calculate_h_Score(newRow, newCol));
 							next.setF_score(next.getG_score()+next.getH_score());
+							next.setE_score(calculate_euclidean_Score(newRow, newCol));
 							next.setCurrentlyFacing("r");
 							pQueue.add(next);
 							_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
@@ -171,7 +175,7 @@ public class AstarSearch {
 						}
 						break;
 						
-					case 3:
+					case 2:
 						//try up
 						nxtRowStr = String.valueOf(currentRow-1);
 						nxtColStr = String.valueOf(currentCol);
@@ -187,6 +191,7 @@ public class AstarSearch {
 							next.setG_score(calculate_g_Score(newRow, newCol));
 							next.setH_score(calculate_h_Score(newRow, newCol));
 							next.setF_score(next.getG_score()+next.getH_score());
+							next.setE_score(calculate_euclidean_Score(newRow, newCol));
 							next.setCurrentlyFacing("u");
 							pQueue.add(next);
 							_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
@@ -406,7 +411,7 @@ public class AstarSearch {
 			String currNodeFacing = currnode.getCurrentlyFacing();
 			
 			if(prevNodeFacing.equalsIgnoreCase(currNodeFacing))
-				cost = cost + 1;
+				cost = cost + 2;
 			else
 				cost =cost + 3;
 			
@@ -446,6 +451,22 @@ public class AstarSearch {
 		return score;
 	}
 	
+	public static double calculate_euclidean_Score(int x, int y)
+	{
+		/*calculateHeuristics(x, y):
+		  Manhattan distance from point a to point b
+		  abs(x - destinationNode.x) + abs(y - destinationNode.y)*/
+		
+		double score = 0;
+		double arg1 = (java.lang.Math.abs(x - _destination[0]))
+				*(java.lang.Math.abs(x - _destination[0]));
+		double arg2 = (java.lang.Math.abs(y - _destination[1]))
+				*(java.lang.Math.abs(y - _destination[1]));
+		score = java.lang.Math.sqrt(arg1+arg2);
+		
+		return score;
+	}
+	
 	public static class NodeComparator implements Comparator<AstarNode>
 	{
 		/*public int compare(AstarNode node1, AstarNode node2) 
@@ -464,7 +485,7 @@ public class AstarSearch {
 		
 		public int compare(AstarNode node1, AstarNode node2) 
 		{
-			if(node1.getF_score() - node2.getF_score() > 0.0)
+			if(node1.getF_score() - node2.getF_score() < 0.0)
 				return 2;
 			else if((node1.getF_score() - node2.getF_score()) == 0.0)
 			{
@@ -479,6 +500,24 @@ public class AstarSearch {
 			else
 				return -2;
 		}
+		
+		/*public int compare(AstarNode node1, AstarNode node2) 
+		{
+			if(node1.getE_score() - node2.getE_score() > 0.0)
+				return 2;
+			else if((node1.getE_score() - node2.getE_score()) == 0.0)
+			{
+				if(node1.getH_score() - node2.getH_score() > 0.0)
+					return 1;
+				else if(node1.getH_score() - node2.getH_score() == 0.0)
+					return 0;
+				else
+					return -1;
+				//return 0;
+			}
+			else
+				return -2;
+		}*/
 		
 	}
 }
