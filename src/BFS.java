@@ -139,7 +139,7 @@ public class BFS
 			String nodeid = "";
 			String nxtRowStr ="";
 			String nxtColStr = "";
-			
+
 
 			// move down
 			nxtRowStr = String.valueOf(currentRow+1);
@@ -179,7 +179,7 @@ public class BFS
 				visitedNode.add(nodeid);
 				queue.add(next);
 			}		
-			
+
 
 			// move left
 			nxtRowStr = String.valueOf(currentRow);
@@ -279,23 +279,23 @@ public class BFS
 
 			System.out.println();
 			System.out.println("The cost for the Shortest path is " +getcost());
-			
+
 			System.out.print("The Expanded Nodes for BFS are...");
-			
+
 			for(int i = 0; i< visitedNode.size(); i++){
-				
-				
+
+
 				System.out.print(visitedNode.get(i) + " -> ");
-				
-				
+
+
 			}
-			
+
 			System.out.println();
-			
+
 			int noOfNodesexpanded = visitedNode.size();
 			System.out.println("The total number of Nodes Expanded are" + " " + noOfNodesexpanded);
-			
-			
+
+
 		}
 		catch (IOException e) 
 		{

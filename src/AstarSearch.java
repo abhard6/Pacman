@@ -25,16 +25,16 @@ public class AstarSearch {
 	private static String _openMazePath = "C:/Users/Piyush/Desktop/openMaze.txt";
 	private static String _smallTurnPath = "C:/Users/Piyush/Desktop/smallTurns.txt";
 	private static String _largeTurnPath = "C:/Users/Piyush/Desktop/bigTurns.txt";
-	
+
 	static int _Column = 0;
 	static int _Rows = 0;
 	static int _cost = 0;
 	static char[][] _maze;
-	
+
 	private static int[] _destination = {0,0};
 	private static int[] _source = {0,0};
 	private static int[] _currentNode = {0,0};
-	
+
 	public static void main(String[] args) 
 	{
 		System.out.println("Select one of the following:");
@@ -55,15 +55,15 @@ public class AstarSearch {
 			System.out.println();
 			System.out.print("Cost is : "+_cost +" And ");
 			System.out.println("Nbr of Expanded nodes:"+_visitedNode.size());
-			
+
 		}
 		catch(IOException ioe)
 		{
 			ioe.printStackTrace();
 		}
-		
+
 	}
-	
+
 	public static void findPath()
 	{
 		AstarNode node = new AstarNode(_currentNode[0],_currentNode[1],null);
@@ -72,16 +72,16 @@ public class AstarSearch {
 		node.setE_score(calculate_euclidean_Score(_currentNode[0], _currentNode[1]));
 		node.setF_score(node.getG_score()+node.getH_score());
 		node.setCurrentlyFacing("r");
-		
+
 		//_visitedNode.add(String.valueOf(_currentNode[0])+":"+String.valueOf(_currentNode[1]));
-		
+
 		Comparator<AstarNode> comparator = new NodeComparator();
 		PriorityQueue<AstarNode> pQueue = new PriorityQueue<AstarNode>(5000, comparator);
-		
+
 		pQueue.add(node);
 		_visitedNode.add(node);
 		_visitedNodeStr.add(String.valueOf(node.getRow())+":"+String.valueOf(node.getCol()));
-		
+
 		boolean pathFound = false;
 		while(!pathFound)
 		{
@@ -91,131 +91,131 @@ public class AstarSearch {
 			//_visitedNodeStr.add(String.valueOf(node.getRow())+":"+String.valueOf(node.getCol()));
 			int currentRow = node.getRow();
 			int currentCol= node.getCol();
-			
+
 			if(_maze[currentRow][currentCol] == '.') 
 			{
 				pathFound = true;
 				break;
 			}
-			
+
 			AstarNode next;
 			for(int neighborsDiscovered =0; neighborsDiscovered<4; neighborsDiscovered++)
 			{
 				switch(neighborsDiscovered)
 				{
-					case 0:
-						// try left
-						String nxtRowStr = String.valueOf(currentRow);
-						String nxtColStr = String.valueOf(currentCol-1);
-						if( (currentCol > 0) & (_maze[currentRow][currentCol - 1] != '%') 
-								& !_visitedNodeStr.contains(nxtRowStr+":"+nxtColStr)) 
-						{
-							node.leftNodeVisited = true;
-							next = new AstarNode(currentRow, (currentCol-1),node);
-							Integer newRow = currentRow;
-							Integer newCol = currentCol-1;
-							next.setRow(newRow);
-							next.setCol(newCol);
-							next.setG_score(calculate_g_Score(newRow, newCol));
-							next.setH_score(calculate_h_Score(newRow, newCol));
-							next.setE_score(calculate_euclidean_Score(newRow, newCol));
-							next.setE_score(next.getG_score()+next.getH_score());
-							next.setCurrentlyFacing("l");
-							pQueue.add(next);
-							_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
-							_visitedNode.add(next);
-						}
-						break;
-						
-					case 1:
-						//try down
-						nxtRowStr = String.valueOf(currentRow+1);
-						nxtColStr = String.valueOf(currentCol);
-						if( (currentCol > 0) & (_maze[currentRow+1][currentCol] != '%') 
-								& !_visitedNodeStr.contains(nxtRowStr+":"+nxtColStr)) 
-						{
-							node.downNodeVisited = true;
-							next = new AstarNode((currentRow+1), currentCol,node);
-							Integer newRow = currentRow+1;
-							Integer newCol = currentCol;
-							next.setRow(newRow);
-							next.setCol(newCol);
-							next.setG_score(calculate_g_Score(newRow, newCol));
-							next.setH_score(calculate_h_Score(newRow, newCol));
-							next.setF_score(next.getG_score()+next.getH_score());
-							next.setE_score(calculate_euclidean_Score(newRow, newCol));
-							next.setCurrentlyFacing("d");
-							pQueue.add(next);
-							_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
-							_visitedNode.add(next);
-						}
-						break;
-						
-					case 3:
-						// try right
-						nxtRowStr = String.valueOf(currentRow);
-						nxtColStr = String.valueOf(currentCol+1);
-						if( (currentCol > 0) & (_maze[currentRow][currentCol + 1] != '%') 
-								& !_visitedNodeStr.contains(nxtRowStr+":"+nxtColStr)) 
-						{
-							node.rightNodeVisited = true;
-							next = new AstarNode(currentRow, (currentCol+1),node);
-							Integer newRow = currentRow;
-							Integer newCol = currentCol+1;
-							next.setRow(newRow);
-							next.setCol(newCol);
-							next.setG_score(calculate_g_Score(newRow, newCol));
-							next.setH_score(calculate_h_Score(newRow, newCol));
-							next.setF_score(next.getG_score()+next.getH_score());
-							next.setE_score(calculate_euclidean_Score(newRow, newCol));
-							next.setCurrentlyFacing("r");
-							pQueue.add(next);
-							_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
-							_visitedNode.add(next);
-						}
-						break;
-						
-					case 2:
-						//try up
-						nxtRowStr = String.valueOf(currentRow-1);
-						nxtColStr = String.valueOf(currentCol);
-						if( (currentRow > 0) & (_maze[currentRow-1][currentCol] != '%') 
-								& !_visitedNodeStr.contains(nxtRowStr+":"+nxtColStr)) 
-						{
-							node.rightNodeVisited = true;
-							next = new AstarNode((currentRow-1), currentCol,node);
-							Integer newRow = currentRow-1;
-							Integer newCol = currentCol;
-							next.setRow(newRow);
-							next.setCol(newCol);
-							next.setG_score(calculate_g_Score(newRow, newCol));
-							next.setH_score(calculate_h_Score(newRow, newCol));
-							next.setF_score(next.getG_score()+next.getH_score());
-							next.setE_score(calculate_euclidean_Score(newRow, newCol));
-							next.setCurrentlyFacing("u");
-							pQueue.add(next);
-							_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
-							_visitedNode.add(next);
-						}
-						break;
+				case 0:
+					// try left
+					String nxtRowStr = String.valueOf(currentRow);
+					String nxtColStr = String.valueOf(currentCol-1);
+					if( (currentCol > 0) & (_maze[currentRow][currentCol - 1] != '%') 
+							& !_visitedNodeStr.contains(nxtRowStr+":"+nxtColStr)) 
+					{
+						node.leftNodeVisited = true;
+						next = new AstarNode(currentRow, (currentCol-1),node);
+						Integer newRow = currentRow;
+						Integer newCol = currentCol-1;
+						next.setRow(newRow);
+						next.setCol(newCol);
+						next.setG_score(calculate_g_Score(newRow, newCol));
+						next.setH_score(calculate_h_Score(newRow, newCol));
+						next.setE_score(calculate_euclidean_Score(newRow, newCol));
+						next.setE_score(next.getG_score()+next.getH_score());
+						next.setCurrentlyFacing("l");
+						pQueue.add(next);
+						_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
+						_visitedNode.add(next);
+					}
+					break;
+
+				case 2:
+					//try down
+					nxtRowStr = String.valueOf(currentRow+1);
+					nxtColStr = String.valueOf(currentCol);
+					if( (currentCol > 0) & (_maze[currentRow+1][currentCol] != '%') 
+							& !_visitedNodeStr.contains(nxtRowStr+":"+nxtColStr)) 
+					{
+						node.downNodeVisited = true;
+						next = new AstarNode((currentRow+1), currentCol,node);
+						Integer newRow = currentRow+1;
+						Integer newCol = currentCol;
+						next.setRow(newRow);
+						next.setCol(newCol);
+						next.setG_score(calculate_g_Score(newRow, newCol));
+						next.setH_score(calculate_h_Score(newRow, newCol));
+						next.setF_score(next.getG_score()+next.getH_score());
+						next.setE_score(calculate_euclidean_Score(newRow, newCol));
+						next.setCurrentlyFacing("d");
+						pQueue.add(next);
+						_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
+						_visitedNode.add(next);
+					}
+					break;
+
+				case 3:
+					// try right
+					nxtRowStr = String.valueOf(currentRow);
+					nxtColStr = String.valueOf(currentCol+1);
+					if( (currentCol > 0) & (_maze[currentRow][currentCol + 1] != '%') 
+							& !_visitedNodeStr.contains(nxtRowStr+":"+nxtColStr)) 
+					{
+						node.rightNodeVisited = true;
+						next = new AstarNode(currentRow, (currentCol+1),node);
+						Integer newRow = currentRow;
+						Integer newCol = currentCol+1;
+						next.setRow(newRow);
+						next.setCol(newCol);
+						next.setG_score(calculate_g_Score(newRow, newCol));
+						next.setH_score(calculate_h_Score(newRow, newCol));
+						next.setF_score(next.getG_score()+next.getH_score());
+						next.setE_score(calculate_euclidean_Score(newRow, newCol));
+						next.setCurrentlyFacing("r");
+						pQueue.add(next);
+						_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
+						_visitedNode.add(next);
+					}
+					break;
+
+				case 1:
+					//try up
+					nxtRowStr = String.valueOf(currentRow-1);
+					nxtColStr = String.valueOf(currentCol);
+					if( (currentRow > 0) & (_maze[currentRow-1][currentCol] != '%') 
+							& !_visitedNodeStr.contains(nxtRowStr+":"+nxtColStr)) 
+					{
+						node.rightNodeVisited = true;
+						next = new AstarNode((currentRow-1), currentCol,node);
+						Integer newRow = currentRow-1;
+						Integer newCol = currentCol;
+						next.setRow(newRow);
+						next.setCol(newCol);
+						next.setG_score(calculate_g_Score(newRow, newCol));
+						next.setH_score(calculate_h_Score(newRow, newCol));
+						next.setF_score(next.getG_score()+next.getH_score());
+						next.setE_score(calculate_euclidean_Score(newRow, newCol));
+						next.setCurrentlyFacing("u");
+						pQueue.add(next);
+						_visitedNodeStr.add(nxtRowStr+":"+nxtColStr);
+						_visitedNode.add(next);
+					}
+					break;
 				}
 			}
 		}
-		
+
 		if(!pathFound)
 			return;
-		
+
 		ArrayList<AstarNode> printList = new ArrayList<AstarNode>();
 		while(node!=null)
 		{
 			printList.add(node);
 			node = node.getParentNode();
 		}
-		//_cost = printList.size();
-		
+		_cost = printList.size();
+
 		Collections.reverse(printList);
-		_cost = computeCost(printList);
-		
+		//_cost = computeCost(printList);
+
 		for(int i = 0; i < printList.size(); i++) 
 		{
 			if(i == printList.size() - 1) 
@@ -231,21 +231,21 @@ public class AstarSearch {
 				System.out.print(printList.get(i) + " <- ");
 			}
 		}
-		
+
 	}
-	
+
 	public static void getSourceAndDestination() 
 	{	    	
 		boolean sourceFound = false;
 		boolean destFound = false;
-		
+
 		for(int row = 0; row<_Rows; row++)
 		{
 			for (int col = 0; col<_Column; col++)
 			{
 				if(sourceFound & destFound)
 					break;
-				
+
 				if(_maze[row][col]== 'P')
 				{
 					_source[0]= row;
@@ -265,7 +265,7 @@ public class AstarSearch {
 				break;
 		}
 	}
-	
+
 	public static void loadFile() throws IOException
 	{
 		BufferedReader userReader = new BufferedReader(new InputStreamReader(System.in));
@@ -300,7 +300,7 @@ public class AstarSearch {
 		System.out.println("Here is the maze");
 		printArray();
 	}
-	
+
 	public static void loadFile(int option) 
 	{
 		int row= 0;
@@ -361,7 +361,7 @@ public class AstarSearch {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void printArray() 
 	{
 		for(int row = 0; row <_Rows ; row++) 
@@ -399,7 +399,7 @@ public class AstarSearch {
 		return _cost;
 	}
 
-	
+
 	public static int computeCost(ArrayList<AstarNode> printList)
 	{
 		int cost = 0;
@@ -409,12 +409,12 @@ public class AstarSearch {
 			AstarNode currnode = printList.get(i);
 			String prevNodeFacing = prevnode.getCurrentlyFacing();
 			String currNodeFacing = currnode.getCurrentlyFacing();
-			
+
 			if(prevNodeFacing.equalsIgnoreCase(currNodeFacing))
 				cost = cost + 2;
 			else
 				cost =cost + 3;
-			
+
 			prevnode = currnode;
 		}
 		return cost;
@@ -426,47 +426,47 @@ public class AstarSearch {
 		/*calculateHeuristics(dest, currentNode):
 		  Manhattan distance from point a to point b
 		  abs(dest.x - currentNode.x) + abs(dest.y - currentNode.y)*/
-		
+
 		double score = 0;
 		score = (java.lang.Math.abs(x - _source[0]))
-		+(java.lang.Math.abs(y - _source[1]));
-		
+				+(java.lang.Math.abs(y - _source[1]));
+
 		//score = score*(1+0.01);
-		
+
 		return score;
 	}
-	
+
 	public static double calculate_h_Score(int x, int y)
 	{
 		/*calculateHeuristics(x, y):
 		  Manhattan distance from point a to point b
 		  abs(x - destinationNode.x) + abs(y - destinationNode.y)*/
-		
+
 		double score = 0;
 		score = (java.lang.Math.abs(x - _destination[0]))
-		+(java.lang.Math.abs(y - _destination[1]));
-		
-		score = score*(1+0.01);
-		
+				+(java.lang.Math.abs(y - _destination[1]));
+
+		//score = score*(1+0.01);
+
 		return score;
 	}
-	
+
 	public static double calculate_euclidean_Score(int x, int y)
 	{
 		/*calculateHeuristics(x, y):
 		  Manhattan distance from point a to point b
 		  abs(x - destinationNode.x) + abs(y - destinationNode.y)*/
-		
+
 		double score = 0;
 		double arg1 = (java.lang.Math.abs(x - _destination[0]))
 				*(java.lang.Math.abs(x - _destination[0]));
 		double arg2 = (java.lang.Math.abs(y - _destination[1]))
 				*(java.lang.Math.abs(y - _destination[1]));
 		score = java.lang.Math.sqrt(arg1+arg2);
-		
+
 		return score;
 	}
-	
+
 	public static class NodeComparator implements Comparator<AstarNode>
 	{
 		/*public int compare(AstarNode node1, AstarNode node2) 
@@ -482,10 +482,10 @@ public class AstarSearch {
 			else
 				return -2;
 		}*/
-		
+
 		public int compare(AstarNode node1, AstarNode node2) 
 		{
-			if(node1.getF_score() - node2.getF_score() < 0.0)
+			if(node1.getF_score() - node2.getF_score() > 0.0)
 				return 2;
 			else if((node1.getF_score() - node2.getF_score()) == 0.0)
 			{
@@ -500,7 +500,7 @@ public class AstarSearch {
 			else
 				return -2;
 		}
-		
+
 		/*public int compare(AstarNode node1, AstarNode node2) 
 		{
 			if(node1.getE_score() - node2.getE_score() > 0.0)
@@ -518,6 +518,6 @@ public class AstarSearch {
 			else
 				return -2;
 		}*/
-		
+
 	}
 }
